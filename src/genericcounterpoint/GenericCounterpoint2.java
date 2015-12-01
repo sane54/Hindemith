@@ -5,8 +5,8 @@
  */
 package genericcounterpoint;
 
-import RhythmModules.VarTimeSigFunkPatternGenerator;
-import ModeModules.Dorian;
+import RhythmModules.*;
+import ModeModules.*;
 import static java.lang.Math.abs;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -34,13 +34,13 @@ public class GenericCounterpoint2 {
     
 static ArrayList<MelodicVoice> unbuilt_voices = new ArrayList();
 static ArrayList<MelodicVoice> built_voices = new ArrayList();
-static Integer [] consonances = {0, 3, 4, 7, 8, 9};
+static Integer [] consonances = {0, 3, 4, 7, 8};
 static Integer [] perfect_consonances = {0, 7};
 static ArrayList<MotionCount> motion_counts = new ArrayList();
 static ArrayList<PitchCount>pitch_counts = new ArrayList();
 static int same_consonant_threshold = 6;
 static Random roll = new Random();
-static int tempo_bpm = 120;
+static int tempo_bpm = 70;
 static int sample_size = 5;
 private static final Logger logger = Logger.getLogger("org.jfugue");
 static int trough = 0;
@@ -48,18 +48,15 @@ static int trough_count = 0;
 static int peak = 0;
 static int peak_count = 0;
 static int same_consonant_count = 0;
+static int piece_length = 10;
+static ModeModule my_mode_module = new Clydian();
+static String [] voice_array = {"tenor","ultra", "soprano", "ultra"};  
 
-
-    public static void main(String[] args) {
-        int piece_length = 1;
-        String [] voice_array = {"soprano", "ultra", "ultra"};
+public static void main(String[] args) {
+   
         int number_of_voices = voice_array.length;
-        ModeModule my_mode_module = new Dorian();
         Random my_roll = new Random();
-        VarTimeSigFunkPatternGenerator james = new VarTimeSigFunkPatternGenerator();
-        
-        
-
+        RhythmModule james = new VarTimeSigFunkPatternGenerator();
 
         Pattern [] rhythm_patterns = james.generate(piece_length, number_of_voices);
         for (int i = 0; i < number_of_voices; i++) {
