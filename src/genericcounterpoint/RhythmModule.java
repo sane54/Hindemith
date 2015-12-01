@@ -13,6 +13,7 @@ import java.util.Random;
  *
  * @author alyssa
  */
-public class RhythmModule {
+public interface RhythmModule {
+    Pattern[] generate(int pieceLength, int numberOfVoices);
     
 }
