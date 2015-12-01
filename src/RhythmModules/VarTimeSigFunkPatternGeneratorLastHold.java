@@ -15,9 +15,9 @@ import genericcounterpoint.RhythmModule;
 import org.jfugue.*;
 import java.util.Random;
 
-public class VarTimeSigFunkPatternGenerator  implements RhythmModule{
-    @Override
-    public  Pattern[] generate(int pieceLength, int numberOfVoices) {
+public class VarTimeSigFunkPatternGeneratorLastHold  implements RhythmModule{
+     @Override
+     public Pattern[] generate(int pieceLength, int numberOfVoices) {
 		Random roll = new Random();
 		int patternIndex;
                 int tempo = 80;
@@ -51,7 +51,8 @@ public class VarTimeSigFunkPatternGenerator  implements RhythmModule{
                             System.out.println("measure length " + measure);
                             while (beat <= measure) 	{                      //for each beat
                                     System.out.println("beat " + beat);
-                                    if (beat == 1)  patternIndex = (roll.nextInt(8) + 8); //consider adding "|| (beat == 3)""
+                                    if  (beat == measure) patternIndex = 8;
+                                    else if (beat == 1)  patternIndex = (roll.nextInt(8) + 8); //consider adding "|| (beat == 3)""
                                     else patternIndex = (roll.nextInt(7));
                                     if (patternIndex == 0) jPattern.add("Rs Rs Rs Rs");
                                     if (patternIndex == 1) jPattern.add("Rs Rs Rs C4s");
