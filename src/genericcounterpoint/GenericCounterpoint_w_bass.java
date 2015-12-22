@@ -34,14 +34,14 @@ public class GenericCounterpoint_w_bass {
     
 static ArrayList<MelodicVoice> unbuilt_voices = new ArrayList();
 static ArrayList<MelodicVoice> built_voices = new ArrayList();
-static Integer [] consonances = {0, 3, 4, 7, 8};
+static Integer [] consonances = {0, 2, 3, 4, 7, 8, 9};
 static Integer [] perfect_consonances = {0, 7};
-static Integer [] root_consonances = {0, 4, 7};
+static Integer [] root_consonances = {0, 3, 4, 7};
 static ArrayList<MotionCount> motion_counts = new ArrayList();
 static ArrayList<PitchCount>pitch_counts = new ArrayList();
 static int same_consonant_threshold = 6;
 static Random roll = new Random();
-static int tempo_bpm = 80;
+static int tempo_bpm = 110;
 static int sample_size = 5;
 private static final Logger logger = Logger.getLogger("org.jfugue");
 static int trough = 0;
@@ -49,10 +49,10 @@ static int trough_count = 0;
 static int peak = 0;
 static int peak_count = 0;
 static int same_consonant_count = 0;
-static int piece_length = 2;
+static int piece_length = 80;
 static int root_key = 0;
-static ModeModule my_mode_module = new Clydian();
-static String [] voice_array = {"soprano"};  
+static ModeModule my_mode_module = new Cblues1();
+static String [] voice_array = {"bass", "soprano", "ultra", "ultra", "ultra", "ultra"};  
 
 public static void main(String[] args) {
    
@@ -134,14 +134,13 @@ public static void main(String[] args) {
     ArrayList<LinkedList> built_voice_queues = new ArrayList();
     int previous_cp_pitch = -13;
     int previous_melodic_interval = 0;
-    trough = 0;
+    trough = 200;
     trough_count = 0;
     peak = 0;
     peak_count = 0;
-
-
     same_consonant_count = 0;
     int voice_pitch_count = 0;
+    
     System.out.println("voiceRange min " + alter_me.getRangeMin() + "   voicerange max " + alter_me.getRangeMax());
     Integer pitch_center = my_mode_module.getPitchCenter(alter_me.getRangeMin(), alter_me.getRangeMax());
     System.out.println("pitchcenter = " + pitch_center);
@@ -177,12 +176,12 @@ public static void main(String[] args) {
         System.out.println("assigning pitch to note " + i +" of " + alter_me.getVoiceLength());
        
         MelodicNote CP_note = alter_me.getMelodicNote(i);
-        if (!CP_note.getRest()) {
+        if (!CP_note.getRest()) { 
             if (current_cp_index >=0) {
                 if(previous_cp_pitch == 9999) previous_cp_pitch = melodic_prev_cp;
                 System.out.println("starting melody check on current cp"+ current_cp_index +" of " + alter_me.getVoiceLength());
                 Boolean got_accent = alter_me.getMelodicNote(current_cp_index).getAccent();
-                System.out.println("this note's accent value is " + got_accent);
+                System.out.println("the current cp note's accent value is " + got_accent);
                 //MELODICALLY EVALUATE Current CP - Choose CP WinnerS - Previous CP = CP Winner
                 pitch_candidates = melodicCheck(pitch_candidates, my_mode_module, alter_me, 
                              pitch_center, voice_pitch_count, previous_cp_pitch,  previous_melodic_interval, got_accent);
@@ -201,40 +200,49 @@ public static void main(String[] args) {
                 if (previous_cp_pitch != -13) {
                     if (voice_pitch_count> 1){
                         if (previous_melodic_interval < 0 && cp_winner - previous_cp_pitch  > 0 ) {// will there be a change in direction from - to +  ie trough?
-                            if (cp_winner == trough) trough_count++;
-                            else {
-                                trough = cp_winner;
+                            if (previous_cp_pitch == trough) {
+                                trough_count++;
+                                
+                            }
+                            else if (previous_cp_pitch != trough)  {
+                              
+                                trough = previous_cp_pitch;
+                                trough_count = 1;
                                 System.out.println("setting new trough = " + previous_cp_pitch);
+                                   
                             }
                         }
 
                         if (previous_melodic_interval > 0 && cp_winner - previous_cp_pitch  < 0 ) {// will there be a change in direction from - to +  ie trough?
-                            if (cp_winner == peak) peak_count++;
+                            if (previous_cp_pitch == peak) peak_count++;
                             else{
-                                peak = cp_winner;
-                                System.out.println("setting new peak = " + previous_cp_pitch);
+                                if (previous_cp_pitch > peak) {
+                                peak = previous_cp_pitch;
+                                peak_count = 1;
+                                System.out.println("setting new peak = " + previous_cp_pitch);    
+                                }
+
                             }
                         }    
                     }
  
                     previous_melodic_interval = cp_winner - previous_cp_pitch;
                     System.out.println("previous melodic interval = " + previous_melodic_interval);
+                    
                     boolean add_pitch = true;
                     for(int pc = 0; pc < pitch_counts.size(); pc++) {
                         if (pitch_counts.get(pc).getPitch() == previous_cp_pitch%12) {
                             pitch_counts.get(pc).incrementCount();
-                            //logger.log(Level.INFO, "Score Partwise Check");
                             add_pitch = false;
                         }        
                     }
-
                     if (add_pitch == true){
                     PitchCount my_pitch_count = new PitchCount(previous_cp_pitch %12);
                     pitch_counts.add(my_pitch_count);               
                     }
 
+                    
                     boolean add_motn = true;
-
                     for(int mc = 0; mc< motion_counts.size(); mc++){
                         if (motion_counts.get(mc).getPreviousPitch() == previous_cp_pitch %12 && motion_counts.get(mc).getSucceedingPitch() == cp_winner %12) {
                             motion_counts.get(mc).incrementCount();
@@ -273,6 +281,8 @@ public static void main(String[] args) {
                 pitch_candidates.add(myPC);
             }
             System.out.println();
+            
+            //Reset Current CP index
             current_cp_index = i;
         }
         else {
@@ -307,10 +317,10 @@ public static void main(String[] args) {
                                     //HARMONICALLY EVALUATE cp candidates against current_cf[b]
                                     if (previous_cf_pitch[b]!=1111)
                                         pitch_candidates = harmonicChecks(pitch_candidates, current_cf.get(b), CF_root, previous_cf_pitch[b],
-                                                            previous_cp_pitch, alter_me.getMelodicNote(current_cp_index), voice_pitch_count);
+                                                            previous_cp_pitch, CP_note, voice_pitch_count);
                                     else pitch_candidates = harmonicChecksSuperBasic(pitch_candidates, current_cf.get(b), CF_root, alter_me.getMelodicNote(current_cp_index));
-                                previous_cf_pitch[b] = current_cf.get(b).getPitch();
-                                previous_cp_pitch =9999;
+                                         previous_cf_pitch[b] = current_cf.get(b).getPitch();
+                                         previous_cp_pitch =9999;
                         }
                     } while (this_cf.getPreviousDuration()< CP_note.getPreviousDuration());
             }
@@ -319,14 +329,34 @@ public static void main(String[] args) {
             //MELODICALLY EVALUATE Current CP
             System.out.println("Last note of voice");
             Boolean last_accent = true;
-            pitch_candidates = melodicCheck(pitch_candidates, my_mode_module, alter_me, 
+            if (!CP_note.getRest()) {
+                pitch_candidates = melodicCheck(pitch_candidates, my_mode_module, alter_me, 
                              pitch_center, voice_pitch_count, previous_cp_pitch,  previous_melodic_interval, last_accent);
-            Integer cp_winner = pickWinner(pitch_candidates);
-             //re-assign variables and move on to next CP note
-            System.out.println("CP winner" + cp_winner);
-            pitch_candidates.clear();
-            CP_note.setPitch(cp_winner);
-            return_me.addMelodicNote(CP_note);            
+                Integer cp_winner = pickWinner(pitch_candidates);
+                System.out.println("CP winner" + cp_winner);
+                pitch_candidates.clear();
+                CP_note.setPitch(cp_winner);
+                return_me.addMelodicNote(CP_note); 
+            }
+            else {
+                Boolean got_accent = alter_me.getMelodicNote(current_cp_index).getAccent();
+                System.out.println("this note's accent value is " + got_accent);
+                //MELODICALLY EVALUATE Current CP - Choose CP WinnerS - Previous CP = CP Winner
+                pitch_candidates = melodicCheck(pitch_candidates, my_mode_module, alter_me, 
+                             pitch_center, voice_pitch_count, previous_cp_pitch,  previous_melodic_interval, got_accent);
+                Integer cp_winner = pickWinner(pitch_candidates);
+                pitch_candidates.clear();
+                System.out.println("CP winner" + cp_winner + " to note " + current_cp_index);
+                MelodicNote current_cp = alter_me.getMelodicNote(current_cp_index);
+                current_cp.setPitch(cp_winner);
+                return_me.addMelodicNote(current_cp);
+                if(!pending_rests.isEmpty())
+                    for (MelodicNote my_rest: pending_rests ){
+                        return_me.addMelodicNote(my_rest);
+                    }
+                pending_rests.clear(); 
+            }
+                       
         }
     }//loop through next CP note 
 
@@ -512,7 +542,7 @@ public static void main(String[] args) {
                 if (previous_melodic_interval > 0 && melody_motion_to_cand <0){ // will there be a trough?
                         if (previous_cp_pitch == peak) peak_count++; //will this trough = previous trough? then increment
                 }
-                if (peak_count > 2 || trough_count > 2) {
+                if (peak_count > 1 || trough_count > 1) {
                         peak_count--; //remember to decrement these counts since we won't actually use this pitch
                         trough_count--;
                         myPC.decrementRank(Decrements.peak_trough_quota_exceed);
@@ -572,7 +602,11 @@ public static void main(String[] args) {
                 //compute interval whether consonant
                 boolean this_interval_consonant = false;
                 for (Integer consonance : consonances) {
-                    if (this_interval == consonance) this_interval_consonant = true;
+                    if (this_interval == consonance){
+                        this_interval_consonant = true;
+                        System.out.println("this_interval == " +consonance + " means this_interval_consonant == " + this_interval_consonant);    
+                        break;
+                    }
 
                 }
                 
@@ -580,8 +614,16 @@ public static void main(String[] args) {
                                     
                 if(this_interval_consonant) {
                     System.out.println("this interval consonant");
+                    if (this_interval ==0) {
+                    myPC.decrementRank(Decrements.octave);
+                    System.out.println("octave");
+                    }
                 }
                 else {
+                        if (this_interval == 1 && abs(myPC.getPitch() - CF_note.getPitch())<14){
+                        myPC.decrementRank(Decrements.minor_9th);
+                        System.out.println("minor 9th");    
+                        }
                         if (CP_note.getAccent()) {
                         //if (CP_note.getAccent() && CP_note.getStartTime()<= CF_note.getStartTime() ) {
                         myPC.decrementRank(Decrements.accented_dissonance);
@@ -726,20 +768,26 @@ public static void main(String[] args) {
         ArrayList<PitchCandidate> pitch_winners = new ArrayList();
         for (PitchCandidate myPC : pitch_candidates){
             System.out.println( "pitch candidate pitch: "+ myPC.getPitch() + " and rank: " + myPC.getRank() );
-            if (pitch_winners.isEmpty()) pitch_winners.add(myPC);
+            if (pitch_winners.isEmpty()) {
+                pitch_winners.add(myPC);
+                System.out.println("pitch_winners is empty. adding " + myPC.getPitch() + " with rank" + myPC.getRank());
+            }
             else if (myPC.getRank() > pitch_winners.get(0).getRank()) {
-                     for (int d = 0; d < pitch_winners.size(); d++){
-                         pitch_winners.remove(d);
-                     }
+                     pitch_winners.clear();
                      pitch_winners.add(myPC);
+                     System.out.println("after emptying pitch_winners adding " + myPC.getPitch() +" with rank "+ myPC.getRank());
                 }
-            else if (Objects.equals(myPC.getRank(), pitch_winners.get(0).getRank())) pitch_winners.add(myPC);
+            else if (Objects.equals(myPC.getRank(), pitch_winners.get(0).getRank())) {
+                pitch_winners.add(myPC);
+                System.out.println("adding " + myPC.getPitch() + " to pitch_winners with rank " + myPC.getRank());
+            }
             
         }
         int cp_winner = pitch_winners.get(0).getPitch();
          
         if (pitch_winners.size() >1) cp_winner = pitch_winners.get(roll.nextInt(pitch_winners.size())).getPitch();
-          return cp_winner;
+        pitch_winners.clear();
+        return cp_winner;
     }
     public static ArrayList<PitchCandidate> harmonicChecksSuperBasic(ArrayList<PitchCandidate> pitch_candidates, MelodicNote CF_note, Boolean CFnoteRoot,
                                                         MelodicNote CP_note){
@@ -765,7 +813,7 @@ public static void main(String[] args) {
                     if (CP_note.getAccent()) {
                         //if (CP_note.getAccent() && CP_note.getStartTime() <= CF_note.getStartTime()) {
                         myPC.decrementRank(Decrements.accented_dissonance);
-                        System.out.println("dissonant accent");
+                        System.out.println("dissonant accent2");
                     }
                 }
             }
