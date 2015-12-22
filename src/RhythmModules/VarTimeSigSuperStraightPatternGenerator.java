@@ -15,7 +15,7 @@ import genericcounterpoint.RhythmModule;
 import org.jfugue.*;
 import java.util.Random;
 
-public class VarTimeSigMildFunkPatternGenerator  implements RhythmModule{
+public class VarTimeSigSuperStraightPatternGenerator  implements RhythmModule{
     @Override
     public  Pattern[] generate(int pieceLength, int numberOfVoices) {
 		Random roll = new Random();
@@ -32,8 +32,8 @@ public class VarTimeSigMildFunkPatternGenerator  implements RhythmModule{
 		for (int iteration = 0; iteration < pieceLength; iteration++) {
 			int tsig = roll.nextInt(3);
 			System.out.println("tsig " + tsig);
-			if (tsig == 0) beatsInBars[iteration] = 4;//2
-			if (tsig == 1) beatsInBars[iteration] = 4;//3
+			if (tsig == 0) beatsInBars[iteration] = 2;//2
+			if (tsig == 1) beatsInBars[iteration] = 3;//3
 			if (tsig == 2) beatsInBars[iteration] = 4;//4
 		}
 		
@@ -51,15 +51,11 @@ public class VarTimeSigMildFunkPatternGenerator  implements RhythmModule{
                             System.out.println("measure length " + measure);
                             while (beat <= measure) 	{                      //for each beat
                                     System.out.println("beat " + beat);
-                                    patternIndex = (roll.nextInt(8));
+                                    patternIndex = (roll.nextInt(4));
                                    if (patternIndex == 0) jPattern.add("A4s Rs Rs Rs");   
                                     if (patternIndex == 1) jPattern.add("A4s Rs C4s Rs");
                                     if (patternIndex == 2) jPattern.add("A4s C4s C4s Rs");
-                                    if (patternIndex == 3) jPattern.add("A4s C4s C4s Cs");
-                                    if (patternIndex == 4) jPattern.add("Rs Rs Rs Rs");
-                                    if (patternIndex == 5) jPattern.add("Rs Rs C4s Rs");
-                                    if (patternIndex == 6) jPattern.add("Rs C4s C4s Rs");
-                                    if (patternIndex == 7) jPattern.add("Rs C4s C4s C4s");
+                                    if (patternIndex == 3) jPattern.add("A4s C4s C4s C4s");
                                     beat++;
 
                                     //System.out.println("patternIndex " + patternIndex);

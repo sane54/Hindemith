@@ -51,13 +51,13 @@ public class VarTimeSigStraightPatternGenerator  implements RhythmModule{
                             System.out.println("measure length " + measure);
                             while (beat <= measure) 	{                      //for each beat
                                     System.out.println("beat " + beat);
-                                    patternIndex = (roll.nextInt(6));
+                                    patternIndex = (roll.nextInt(5));
                                    if (patternIndex == 0) jPattern.add("A4s Rs Rs Rs");   
                                     if (patternIndex == 1) jPattern.add("A4s Rs C4s Rs");
                                     if (patternIndex == 2) jPattern.add("A4s C4s C4s Rs");
-                                    if (patternIndex == 3) jPattern.add("R4s R4s R4s R4s");
-                                    if (patternIndex == 4) jPattern.add("R4s R4s C4s R4s");
-                                    if (patternIndex == 5) jPattern.add("R4s C4s C4s R4s");
+                                    if (patternIndex == 3) jPattern.add("Rs Rs Rs Rs");
+                                    if (patternIndex == 4) jPattern.add("Rs Rs C4s Rs");
+                                    if (patternIndex == 5) jPattern.add("Rs C4s C4s Rs");
                                     beat++;
 
                                     //System.out.println("patternIndex " + patternIndex);

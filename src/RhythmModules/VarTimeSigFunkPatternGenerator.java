@@ -51,8 +51,22 @@ public class VarTimeSigFunkPatternGenerator  implements RhythmModule{
                             System.out.println("measure length " + measure);
                             while (beat <= measure) 	{                      //for each beat
                                     System.out.println("beat " + beat);
-                                    if (beat == 1)  patternIndex = (roll.nextInt(8) + 8); //consider adding "|| (beat == 3)""
-                                    else patternIndex = (roll.nextInt(7));
+                                    if (beat == 1)  {patternIndex = (roll.nextInt(8) );
+                                    if (patternIndex == 0) jPattern.add("A4s Rs Rs Rs");
+                                    if (patternIndex == 1) jPattern.add("A4s Rs Rs C4s");
+                                    if (patternIndex == 2) jPattern.add("A4s Rs C4s Rs");
+                                    if (patternIndex == 3) jPattern.add("A4s Rs C4s C4s");
+                                    if (patternIndex == 4) jPattern.add("A4s C4s Rs Rs");
+                                    if (patternIndex == 5) jPattern.add("A4s C4s Rs C4s");
+                                    if (patternIndex == 6) jPattern.add("A4s C4s C4s Rs");
+                                    if (patternIndex == 7) jPattern.add("A4s C4s C4s C4s");
+                                    }
+                                    else if (roll.nextInt(3)== 0) {
+                                        patternIndex = roll.nextInt(2);
+                                        if (patternIndex == 0) jPattern.add("Rs Rs Rs Rs");
+                                        if (patternIndex == 1) jPattern.add("A4s Rs C4s Rs");
+                                    }
+                                    else {patternIndex = (roll.nextInt(16));
                                     if (patternIndex == 0) jPattern.add("Rs Rs Rs Rs");
                                     if (patternIndex == 1) jPattern.add("Rs Rs Rs C4s");
                                     if (patternIndex == 2) jPattern.add("Rs Rs C4s Rs");
@@ -77,6 +91,7 @@ public class VarTimeSigFunkPatternGenerator  implements RhythmModule{
                                     if (patternIndex == 21) jPattern.add("A4s C4s Rs C4s");
                                     if (patternIndex == 22) jPattern.add("A4s C4s C4s Rs");
                                     if (patternIndex == 23) jPattern.add("A4s C4s C4s C4s");
+                                    }
                                     beat++;
 
                                     //System.out.println("patternIndex " + patternIndex);

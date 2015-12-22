@@ -51,7 +51,7 @@ public class VarTimeSigFunkPatternGeneratorLastHold  implements RhythmModule{
                             System.out.println("measure length " + measure);
                             while (beat <= measure) 	{                      //for each beat
                                     System.out.println("beat " + beat);
-                                    if  (beat == measure) patternIndex = 8;
+                                    if  (beat == measure) patternIndex = 0;
                                     else if (beat == 1)  patternIndex = (roll.nextInt(8) + 8); //consider adding "|| (beat == 3)""
                                     else patternIndex = (roll.nextInt(7));
                                     if (patternIndex == 0) jPattern.add("Rs Rs Rs Rs");
