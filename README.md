@@ -1,4 +1,4 @@
-# antichrist 
+# Hindemith
 Generic Musical Counterpoint Algorithm
 
 Description: 
