@@ -23,7 +23,7 @@ import java.util.Date;
  *
  * @author alyssa
  */
-public class GenericCounterpoint_w_bass {
+public class GenericCounterpoint_w_RootKey {
 
     /**
      * @param args the command line arguments
@@ -34,14 +34,14 @@ public class GenericCounterpoint_w_bass {
     
 static ArrayList<MelodicVoice> unbuilt_voices = new ArrayList();
 static ArrayList<MelodicVoice> built_voices = new ArrayList();
-static Integer [] consonances = {0, 3, 4, 7, 8, 9};
+static Integer [] consonances = {0, 2, 3, 4, 7, 8, 9, 10, 11};
 static Integer [] perfect_consonances = {0, 7};
 static Integer [] root_consonances = {0, 3, 4, 7};
 static ArrayList<MotionCount> motion_counts = new ArrayList();
 static ArrayList<PitchCount>pitch_counts = new ArrayList();
 static int same_consonant_threshold = 6;
 static Random roll = new Random();
-static int tempo_bpm = 60;
+static int tempo_bpm = 120;
 static int sample_size = 5;
 private static final Logger logger = Logger.getLogger("org.jfugue");
 static int trough = 0;
@@ -49,16 +49,16 @@ static int trough_count = 0;
 static int peak = 0;
 static int peak_count = 0;
 static int same_consonant_count = 0;
-static int piece_length = 80;
+static int piece_length = 10;
 static int root_key = 0;
-static ModeModule my_mode_module = new Clydian();
-static RhythmModule james = new VarTimeSigSuperStraightPatternGenerator();
-static String [] voice_array = {"ultra", "ultra"};  
+static ModeModule my_mode_module = new ChromaticTonic();
+static String [] voice_array = {"soprano", "ultra"};  
 
 public static void main(String[] args) {
    
         int number_of_voices = voice_array.length;
         Random my_roll = new Random();
+        RhythmModule james = new FunkRiffPatternGenerator();
 
         Pattern [] rhythm_patterns = james.generate(piece_length, number_of_voices);
         for (int i = 0; i < number_of_voices; i++) {
@@ -70,9 +70,8 @@ public static void main(String[] args) {
             unbuilt_voices.add(this_voice);
         }
         int ub_size =unbuilt_voices.size();
-        for (int i = 0; i < number_of_voices; i++){
-            //int voice_index = my_roll.nextInt(unbuilt_voices.size()); 
-            int voice_index = i;
+        for (int i = 0; i < ub_size; i++){
+            int voice_index = my_roll.nextInt(unbuilt_voices.size()); 
             System.out.println(" about to build voice pitches for "+ voice_index);
             MelodicVoice nextVoice = buildVoicePitches(unbuilt_voices.get(voice_index), number_of_voices, my_mode_module);
             ArrayList<MelodicNote> verify_array = nextVoice.getNoteArray();
@@ -82,9 +81,9 @@ public static void main(String[] args) {
              else System.out.println(verify.getPitch() + " " + verify.getDuration() + "   ");
             }
             built_voices.add(nextVoice);
-            //unbuilt_voices.remove(voice_index);
+            unbuilt_voices.remove(voice_index);
         }
-        unbuilt_voices.clear();
+
         Pattern music_output = new Pattern();
         music_output.addElement(new Tempo (tempo_bpm));
         

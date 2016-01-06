@@ -42,7 +42,7 @@ public class VarTimeSigSuperStraightPatternGenerator  implements RhythmModule{
                     System.out.println("voice " + voice);
                     Pattern jPattern = new Pattern();
                     jPattern.addElement(new Tempo(tempo));
-                        for (int barNum = 0; barNum < pieceLength; barNum++) { // for each bar
+                        for (int barNum = 0; barNum < pieceLength - 1; barNum++) { // for each bar
                             System.out.println("bar " + barNum);
                             int beat = 1;
                             measure = beatsInBars[barNum];
@@ -63,6 +63,7 @@ public class VarTimeSigSuperStraightPatternGenerator  implements RhythmModule{
                             }
 			
 			}
+                        jPattern.add("A4w");
                     VoiceArray[voice] = jPattern;
                     System.out.println("finished voice " + voice);
                    // Player my_player = new Player();
